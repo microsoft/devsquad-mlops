@@ -1,0 +1,21 @@
+variables:
+- name: SERVICECONNECTION
+  value: rg-dataplatform-dev
+- name: WORKSPACENAME
+  value: mlw-trunkbased-dev
+- name: RESOURCEGROUPNAME
+  value: mlops-trunkbased-dev
+- name: STORAGEACCOUNTNAME
+  value: aamldatalake
+- name: LOCATION
+  value: eastus2
+- name: KEYVAULTNAME
+  value: kv-trunkbased-dev
+- name: env
+  value: dev
+- name: modelName
+  value: hate-pt-speech
+- name: description
+  value: 'A hate detection model for tweets in portuguese'
+- name: condaEnvName
+  value: transformers-torch-19

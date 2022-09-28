@@ -1,0 +1,75 @@
+parameters:
+- name: azureServiceConnectionName
+  type: string
+- name: name
+  type: string
+- name: jobFile
+  type: string
+- name: useGitMessageForName
+  type: boolean
+  default: true
+- name: workspaceName
+  type: string
+- name: resourceGroup
+  type: string
+- name: noWait
+  type: boolean
+  default: false
+- name: stepDisplayName
+  type: string
+  default: Submitting job
+
+steps:
+  - task: AzureCLI@2
+    name: jobRun
+    displayName: ${{ parameters.stepDisplayName }}
+    inputs:
+      scriptType: bash
+      scriptLocation: inlineScript
+      azureSubscription: ${{ parameters.azureServiceConnectionName }}
+      inlineScript: |
+        JOB_NAME="${{ parameters.name }}-$(Build.BuildId)"
+        echo "##[debug]Creating job with name: $JOB_NAME" 
+        echo "##vso[task.setvariable variable=jobName;isOutput=true]$JOB_NAME" 
+
+        if ${{ lower(parameters.useGitMessageForName) }}; then
+          DISPLAY_NAME="$(Build.SourceVersionMessage)"
+          DISPLAY_NAME=$(echo ${DISPLAY_NAME// /-} | tr -dc '[:alnum:]-')
+          echo "::debug::Configuring display name to: $DISPLAY_NAME" 
+        else
+          DISPLAY_NAME=$JOB_NAME
+        fi
+
+        az ml job create -n $JOB_NAME -f ${{ parameters.jobFile }} --resource-group ${{ parameters.resourceGroup }} --workspace-name ${{ parameters.workspaceName }} --set display_name="$DISPLAY_NAME"
+        
+        if ! ${{ parameters.noWait }}; then
+          echo "##[debug]Streaming logs"
+          
+          if [[ $(az ml job stream -n $JOB_NAME --resource-group ${{ parameters.resourceGroup }} --workspace-name ${{ parameters.workspaceName }} >> job.log) ]]; then
+            echo "##[debug]Logs captured"
+          else
+            echo "##vso[task.logissue type=warning;]Log capturing didn't work. Check experiment details."
+            echo "##[debug]Waiting for the job "
+            JOB_STATUS="Queued"
+            while ! [[ $JOB_STATUS =~ ^(Failed|Completed|Canceled)$ ]];
+            do
+              sleep 60s
+              echo "##[debug]Still queued/running"
+              JOB_STATUS=$(az ml job show -n $JOB_NAME --resource-group ${{ parameters.resourceGroup }} --workspace-name ${{ parameters.workspaceName }} | jq -r '.status')
+            done
+
+            if [[ $JOB_STATUS != "Completed" ]]; then
+              echo "##vso[task.logissue type=error;]Remote job status is failed or canceled."
+              exit 1
+            fi
+          fi
+        fi
+    target:
+      settableVariables:
+      - jobName
+  - task: PublishPipelineArtifact@1
+    displayName: Uploading job logs
+    condition: and(succeededOrFailed(), and(eq('${{ parameters.noWait }}', 'false'), ne(variables['jobRun.jobName'], '')))
+    inputs:
+      artifactName: ${{ parameters.name }}-log
+      targetPath: job.log

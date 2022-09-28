@@ -1,0 +1,51 @@
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - .aml/data/*
+    - .cloud/*
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: secrets
+  - template: variables.group.yaml
+
+stages:
+- stage: aml_workspace_init
+  displayName: Workspace - Initialization
+  jobs:
+  - job: iac_deployment
+    displayName: IaC - Deployment
+    steps:
+      - template: templates/azure-arm-template-deployment/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          resourceGroup: $(RESOURCEGROUPNAME)
+          location: $(LOCATION)
+          deploymentName: aml-deployment
+          template: .cloud/templates/deploy.json
+          version: 1.0
+          parameters: .cloud/$(env)/deploy.parameters.json computeAdminUserName=$(computeAdminUserName) computeAdminUserPassword=$(computeAdminUserPassword) datasetsClientId=$(datasetsClientId) datasetsClientSecret=$(datasetsClientSecret) secretsManagementObjectId=$(AUTOMATION_OBJECT_ID)
+
+  - job: datasets_init
+    displayName: Datasets - Initialization
+    dependsOn: iac_deployment
+    steps:
+      - template: templates/aml-cli-install/step.yaml
+        parameters:
+          componentSupport: false
+          minVersion: 2.0
+
+      - template: templates/aml-dataset-create/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          datasetFile: .aml/data/*/dataset.yml
+          initialize: true
+          initialDataPath: sample
+          storageAccount: $(STORAGEACCOUNTNAME)
+          workspaceName: $(WORKSPACENAME)
+          resourceGroup: $(RESOURCEGROUPNAME)

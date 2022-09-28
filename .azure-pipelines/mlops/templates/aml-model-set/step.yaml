@@ -1,0 +1,90 @@
+parameters:
+- name: azureServiceConnectionName
+  type: string
+- name: modelName
+  type: string
+- name: modelVersion
+  type: string
+  default: latest
+- name: property
+  type: string
+- name: value
+  type: string
+- name: exclusive
+  type: boolean
+  default: false
+- name: replaceExistingWith
+  type: string
+  default:
+- name: isMlflowStage
+  type: boolean
+  default: false
+- name: workspaceName
+  type: string 
+- name: resourceGroup
+  type: string
+
+steps:
+- task: AzureCLI@2
+  displayName: Configuring model's ${{ parameters.property }}
+  inputs:
+    scriptType: bash
+    scriptLocation: inlineScript
+    azureSubscription: ${{ parameters.azureServiceConnectionName }}
+    inlineScript: |
+      set -e
+      SUBSCRIPTION_ID=$(az account show | jq -r ".id")
+      
+      if ${{ lower(parameters.exclusive) }}; then
+        ACTION_PATH=$(Build.SourcesDirectory)/.azure-pipelines/templates/aml-model-set/
+
+        echo "##[debug]Removing or replacing tag ${{ parameters.property }} from model ${{ parameters.modelName }}"
+        if [[ "${{ parameters.replaceExistingWith }}" == "" ]]; then
+          # az ml model update -n "${{ parameters.modelName }}" -g ${{ parameters.resourceGroup }} -w ${{ parameters.workspaceName }} --version $VERSION_RESET --set tags={}
+          python -m jobtools  $ACTION_PATH/tags.py remove_tag \
+            --subscription-id $SUBSCRIPTION_ID \
+            --workspace-name ${{ parameters.workspaceName }} \
+            --resource-group ${{ parameters.resourceGroup }} \
+            --name ${{ parameters.modelName }} \
+            --tag ${{ parameters.property }}
+
+        else
+          echo "##[debug]Replacing tag ${{ parameters.property }} from model ${{ parameters.modelName }} with value ${{ parameters.replaceExistingWith }}"
+          python -m jobtools $ACTION_PATH/tags.py add_tag \
+            --subscription-id $SUBSCRIPTION_ID \
+            --workspace-name ${{ parameters.workspaceName }} \
+            --resource-group ${{ parameters.resourceGroup }} \
+            --name ${{ parameters.modelName }} \
+            --version "${{ parameters.property }}=${{ parameters.value }}"  \
+            --tag ${{ parameters.property }} \
+            --value ${{ parameters.replaceExistingWith }}
+        fi
+      fi
+
+      if [[ "${{ parameters.modelVersion }}" == "latest" ]]; then
+        echo "##[debug]Identifying latest version of the model ${{ parameters.modelName }}"
+        MODEL_VERSION=$(az ml model list --name ${{ parameters.modelName }} -g ${{ parameters.resourceGroup }} -w ${{ parameters.workspaceName }} | jq -r '.[0].version')
+      else
+        MODEL_VERSION=${{ parameters.modelVersion }}
+      fi
+      
+      echo "##[debug]Applying tag ${{ parameters.property }}=${{ parameters.value }} to model ${{ parameters.modelName }}:$MODEL_VERSION"
+      python -m jobtools $ACTION_PATH/tags.py add_tag \
+          --subscription-id $SUBSCRIPTION_ID \
+          --workspace-name ${{ parameters.workspaceName }} \
+          --resource-group ${{ parameters.resourceGroup }} \
+          --name ${{ parameters.modelName }} \
+          --version $MODEL_VERSION  \
+          --tag ${{ parameters.property }} \
+          --value ${{ parameters.value }}
+      
+      if ${{ parameters.isMlflowStage }}; then
+        echo "##[debug]Moving model ${{ parameters.modelName }}:$MODEL_VERSION to stage ${{ parameters.value }}"
+        python -m jobtools $ACTION_PATH/tags.py update_model_stage \
+          --subscription-id $SUBSCRIPTION_ID \
+          --workspace-name ${{ parameters.workspaceName }} \
+          --resource-group ${{ parameters.resourceGroup }} \
+          --name ${{ parameters.modelName }} \
+          --version $MODEL_VERSION  \
+          --stage ${{ parameters.value }}
+      fi

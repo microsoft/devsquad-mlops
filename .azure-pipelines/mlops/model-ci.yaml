@@ -1,0 +1,65 @@
+trigger: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - template: variables.group.yaml
+
+stages:
+- stage: aml_model_integrate
+  displayName: Model - Integration
+  jobs:
+  - job: integrate
+    displayName: Model validation
+    steps:
+      - template: templates/aml-cli-install/step.yaml
+        parameters:
+          componentSupport: false
+          minVersion: 2.0
+
+      - template: templates/conda-setup/step.yaml
+
+      - template: templates/aml-env-build/step.yaml
+        parameters:
+          envFile: .aml/environments/${{ variables.condaEnvName}}/environment.yml
+
+      - template: templates/aml-workspace-get-config/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          workspaceName: $(WORKSPACENAME)
+          resourceGroup: $(RESOURCEGROUPNAME)
+          outputFile: $(Pipeline.Workspace)/workspace.config.json
+
+      - template: templates/pylint-run/step.yaml
+        parameters:
+          source: src
+          useConda: true
+          condaEnvName: ${{ variables.condaEnvName }}
+          disable: W1203,C0103,C0303,W0603,W0632,R0801,R0913
+
+      - template: templates/azure-pytest-run/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          source: src
+          useConda: true
+          condaEnvName: ${{ variables.condaEnvName }}
+          params: -q --ws-config-file="$(Pipeline.Workspace)/workspace.config.json"
+
+      - template: templates/aml-env-ensure/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          envFile: .aml/environments/${{ variables.condaEnvName}}/environment.yml
+          validateOnly: true
+          workspaceName: $(WORKSPACENAME)
+          resourceGroup: $(RESOURCEGROUPNAME)
+
+      - template: templates/aml-job-create/step.yaml
+        parameters:
+          azureServiceConnectionName: $(SERVICECONNECTION)
+          name: ${{ variables.modelName}}
+          jobFile: .aml/jobs/hatedetection/train.job.yml
+          workspaceName: $(WORKSPACENAME)
+          resourceGroup: $(RESOURCEGROUPNAME)
+          noWait: false
+

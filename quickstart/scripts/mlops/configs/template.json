@@ -1,0 +1,45 @@
+{
+    "Project": {
+        "Name": "<project.name>",
+        "Alias": "<project.alias>",
+        "ServicePrincipalSecret": "<serviceprincipal.secret>"
+    },
+    "RepoConfiguration": {
+        "RepoName": "<project.name>",
+        "AzureDevOpsOrganization": "<azureDevOps.organization>",
+        "AzureDevOpsOrganizationURI": "https://dev.azure.com/<azureDevOps.organization>",
+        "AzureDevOpsProject": "<project.name>",
+        "TemplateGitUrl": "https://github.com/microsoft/gps-data_ai-devsquad-mlops.git",
+        "MinimumApprovers": "1",
+        "Pipelines": [
+            {
+                "Name": "<project.alias>-Workspace-CD",
+                "SourceYamlPath": ".azure-pipelines/mlops/workspace-cd.yaml",
+            },
+            {
+                "Name": "<project.alias>-Environment-CI",
+                "SourceYamlPath": ".azure-pipelines/mlops/environment-ci.yaml", 
+                "BuildPolicy": {
+                    "Name": "<project.alias>-environment-ci build policy",
+                    "PathFilter": "environments/**"
+                }
+            },
+            {
+                "Name": "<project.alias>-Environment-CD",
+                "SourceYamlPath": ".azure-pipelines/mlops/environment-cd.yaml"
+            },
+            {
+                "Name": "<project.alias>-Model-CI",
+                "SourceYamlPath": ".azure-pipelines/mlops/model-ci.yaml", 
+                "BuildPolicy": {
+                    "Name": "<project.alias>-model-ci build policy",
+                    "PathFilter": "src/**;jobs/**"
+                }
+            },
+            {
+                "Name": "<project.alias>-Model-CD",
+                "SourceYamlPath": ".azure-pipelines/mlops/model-cd.yaml"
+            }
+        ]
+    }
+}
