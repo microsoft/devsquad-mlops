@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "properties": {
+    "Project": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Alias": {
+          "type": "string"
+        }        
+      },
+      "required": [
+        "Name"
+      ]
+    },
+    "RepoConfiguration": {
+      "type": "object",
+      "properties": {
+        "RepoName": {
+          "type": "string"
+        },
+        "AzureDevOpsOrganization": {
+          "type": "string"
+        },        
+        "AzureDevOpsOrganizationURI": {
+          "type": "string"
+        },
+        "AzureDevOpsProject": {
+          "type": "string"
+        },
+        "TemplateGitUrl": {
+          "type": "string"
+        },
+        "MinimumApprovers": {
+          "type": "string"
+        },
+        "Pipelines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "Name": {
+                "type": "string"
+              },
+              "SourceYamlPath": {
+                "type": "string"
+              },
+              "BuildPolicy": {
+                "type": "object",
+                "properties": {
+                  "Name": {
+                    "type": "string"
+                  },
+                  "PathFilter": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Name",
+                  "PathFilter"
+                ]
+              }
+            },
+            "required": [
+              "Name",
+              "SourceYamlPath"
+            ]
+          }
+        }
+      },
+      "required": [
+        "AzureDevOpsOrganizationURI",
+        "AzureDevOpsProject",
+        "MinimumApprovers",
+        "Pipelines",
+        "RepoName"
+      ]
+    }
+  },
+  "required": [
+    "Project",
+    "RepoConfiguration"
+  ]
+}
