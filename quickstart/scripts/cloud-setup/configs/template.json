@@ -21,7 +21,7 @@
     },
     "output": [
         {
-            "template": "quickstart/mlops/configs/template.json",
+            "template": "quickstart/scripts/mlops/configs/template.json",
             "file": "quickstart/outputs/hol.json"            
         }
     ]

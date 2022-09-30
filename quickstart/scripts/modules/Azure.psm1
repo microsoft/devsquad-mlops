@@ -92,7 +92,7 @@ function SetupResourceGroups {
         [Parameter(Mandatory)] [hashtable] $Configuration
     )
 
-    foreach ($resourceType in @('data','compute','ml','network')) 
+    foreach ($resourceType in @('ml')) 
 	{
 		$SolutionName =	$Configuration.project.alias
 		CreateOrGetResourceGroup `

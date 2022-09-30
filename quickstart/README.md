@@ -108,7 +108,7 @@ Execute all these steps below to setup your evironment before running the Hands-
         ```powershell
         az config set extension.use_dynamic_install=yes_without_prompt
         Connect-AzureAD
-        ./quickstart/scripts/cloud-setup/Deploy-AzurePreReqs.ps1 -ConfigurationFile "quickstart/configs/cloud-setup/hol.json"
+        ./quickstart/scripts/cloud-setup/Deploy-AzurePreReqs.ps1 -ConfigurationFile "quickstart/scripts/cloud-setup/configs/hol.json"
         ```
 
     - The diagram below shows what Azure resources will be created after the execution of the script.
