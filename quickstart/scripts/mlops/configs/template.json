@@ -14,7 +14,7 @@
         "Pipelines": [
             {
                 "Name": "<project.alias>-Workspace-CD",
-                "SourceYamlPath": ".azure-pipelines/mlops/workspace-cd.yaml",
+                "SourceYamlPath": ".azure-pipelines/mlops/workspace-cd.yaml"
             },
             {
                 "Name": "<project.alias>-Environment-CI",
