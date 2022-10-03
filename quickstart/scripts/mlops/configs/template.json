@@ -39,6 +39,10 @@
             {
                 "Name": "<project.alias>-Model-CD",
                 "SourceYamlPath": ".azure-pipelines/mlops/model-cd.yaml"
+            },
+            {
+                "Name": "<project.alias>-Model-CT",
+                "SourceYamlPath": ".azure-pipelines/mlops/model-ct.yaml"
             }
         ]
     }
