@@ -50,8 +50,8 @@ function UpdateIaCParameters {
 		-ServicePrincipalSecret $ServicePrincipalSecret `
 	
 	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
-		-InputFile azure-pipelines/variable.environment.template.yml `
-		-OutputFile azure-pipelines/variable.environment.yml `
+		-InputFile .azure-pipelines/variable.environment.template.yml `
+		-OutputFile .azure-pipelines/variable.environment.yml `
 		
 	EndScope
 
