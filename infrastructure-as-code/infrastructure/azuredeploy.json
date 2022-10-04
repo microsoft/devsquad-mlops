@@ -1,0 +1,174 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "type": "string",
+      "metadata": {
+        "description": "Environment where resources will be deployed"
+      }
+    },
+    "solutionName": {
+      "type": "string",
+      "metadata": {
+        "description": "Solution name"
+      }
+    },    
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "Region where the resource is provisioned"
+      }
+    }, 
+    "servicePrincipal": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Principal for credentials usage"
+      }
+    },
+    "servicePrincipalSecret": {
+      "type": "string",
+      "metadata": {
+        "description": "Service Principal Secret for databricks usage"
+      }
+    },
+    "resourceGroupMachineLearning": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group where 'Machine Learning' resources will be provisioned"
+      }
+    }
+  },
+  "functions": [
+    {
+      "namespace": "naming",
+      "members": {
+        "default": {
+          "parameters": [
+            {
+              "name": "resourcePurpose",
+              "type": "string"
+            },
+            {
+              "name": "uniqueStr",
+              "type": "string"
+            },
+            {
+              "name": "environment",
+              "type": "string"
+            },
+            {
+              "name": "solutionName",
+              "type": "string"
+            }            
+          ],
+          "output": {
+            "type": "string",
+            "value": "[concat(parameters('resourcePurpose'), '-', parameters('solutionName'), '-', parameters('uniqueStr'), '-',  parameters('environment'))]"
+          }
+        },
+        "clean": {
+          "parameters": [
+            {
+              "name": "resourcePurpose",
+              "type": "string"
+            },
+            {
+              "name": "uniqueStr",
+              "type": "string"
+            },
+            {
+              "name": "environment",
+              "type": "string"
+            },
+            {
+              "name": "solutionName",
+              "type": "string"
+            }            
+          ],
+          "output": {
+            "type": "string",
+            "value": "[concat(parameters('resourcePurpose'), parameters('solutionName'), parameters('uniqueStr'), parameters('environment'))]"
+          }
+        }
+      }
+    }
+  ],
+  "variables": {
+    "envMapping": {
+      "eastus": "eastus",
+      "brazilsouth": "brzsouth"
+    },
+    "uniqueStr": "[substring(uniqueString(subscription().subscriptionId), 0, 6)]",
+    "mlDeploymentName": "[concat('ml-', deployment().name)]",
+    "amlWorkspaceName": "[naming.default('mlw',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]",
+    "amlKeyVaultName": "[naming.default('kvm',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]",
+    "amlStorageAccountName": "[naming.clean('stml',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]",
+    "amlApplicationInsightsName": "[naming.default('appi-ml',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]",
+    "amlContainerRegistryName": "[naming.clean('crml',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2020-06-01",
+      "name": "[variables('mlDeploymentName')]",
+      "resourceGroup": "[parameters('resourceGroupMachineLearning')]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "relativePath": "linkedTemplates/ml/template.json"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "amlWorkspaceName": {
+            "value": "[variables('amlWorkspaceName')]"
+          },
+          "amlKeyVaultName": {
+            "value": "[variables('amlKeyVaultName')]"
+          },
+          "amlStorageAccountName": {
+            "value": "[variables('amlStorageAccountName')]"
+          },
+          "amlApplicationInsightsName": {
+            "value": "[variables('amlApplicationInsightsName')]"
+          },
+          "amlContainerRegistryName": {
+            "value": "[variables('amlContainerRegistryName')]"
+          }
+        }
+      }         
+    }
+  ],
+  "outputs": {
+    "location": {
+      "type": "string",
+      "value": "[parameters('location')]"
+    },
+    "resourceGroupML": {
+      "type": "string",
+      "value": "[parameters('resourceGroupMachineLearning')]"
+    },
+    "amlWorkspaceName": {
+      "type": "string",
+      "value": "[variables('amlWorkspaceName')]"
+    },
+    "amlKeyVaultName": {
+      "type": "string",
+      "value": "[variables('amlKeyVaultName')]"
+    },
+    "amlStorageAccountName": {
+      "type": "string",
+      "value": "[variables('amlStorageAccountName')]"
+    },
+    "amlApplicationInsightsName": {
+      "type": "string",
+      "value": "[variables('amlApplicationInsightsName')]"
+    },
+    "amlContainerRegistryName": {
+      "type": "string",
+      "value": "[variables('amlContainerRegistryName')]"
+    }
+  }
+}

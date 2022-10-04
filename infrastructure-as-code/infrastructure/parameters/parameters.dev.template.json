@@ -1,0 +1,54 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment":{
+            "value": "dev"
+        },
+        "solutionName":{
+            "value": "<Project.Alias>"
+        }, 
+        "location": {
+            "value": "eastus"
+        },
+        "servicePrincipal": {
+            "value": "SP-<Project.Name>-DevTest"
+        },
+        "servicePrincipalSecret": {
+            "value": "<ServicePrincipal.Secret>"
+        },
+        "resourceGroupData":{
+            "value": "rg-<Project.Alias>-data-dev"
+        },
+        "resourceGroupCompute":{
+            "value": "rg-<Project.Alias>-compute-dev"
+        },
+        "resourceGroupMachineLearning":{
+            "value": "rg-<Project.Alias>-ml-dev"
+        },
+        "resourceGroupManagedDatabricks":{
+            "value": "rg-<Project.Alias>-compute-dbw-dev"
+        },
+        "dataLakeSkuName":{
+            "value": "Standard_LRS"
+        },
+        "keyVaultSecretsAdminObjectId": {
+            "value": "c06d0482-8384-4205-a17f-edd2222dce1b"
+        },
+        "dataFactoryAccountName": {
+            "value": "<RepoConfiguration.AzureDevOpsOrganization>"
+        },
+        "dataFactoryProjectName": {
+            "value": "<RepoConfiguration.AzureDevOpsProject>"
+        },
+        "dataFactoryRepositoryName": {
+            "value": "<RepoConfiguration.RepoName>"
+        },
+        "dataFactoryCollaborationBranch": {
+            "value": "develop"
+        },
+        "dataFactoryRootFolder": {
+            "value": "data-platform/adf"
+        }
+    }
+}

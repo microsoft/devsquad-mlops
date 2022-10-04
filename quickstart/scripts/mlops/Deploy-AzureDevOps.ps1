@@ -22,7 +22,7 @@ $config = LoadConfigurationFile -ConfigurationFile $ConfigurationFile -Verbose:$
 
 BeginScope -Scope "Enviornments"
 
-$environment = 'dev','qa','prod','databricks-dev','databricks-qa','databricks-prod'
+$environment = 'dev'
 
 foreach ($env in $environment)
 {
@@ -31,7 +31,7 @@ foreach ($env in $environment)
 
 EndScope
 
-$branches = 'develop','qa','main'
+$branches = 'develop'
 
 try {
 

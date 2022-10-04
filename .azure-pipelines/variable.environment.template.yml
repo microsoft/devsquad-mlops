@@ -1,0 +1,8 @@
+variables:
+  iacCdVariableGroupPrefix: 'mlops-iac-cd-output'
+  location: eastus
+  solutionName: <Project.Alias>
+  ${{ if and(ne(variables['Build.SourceBranchName'], 'main'), ne(variables['Build.SourceBranchName'], 'qa')) }}:
+    environment: dev
+    azureServiceConnection: spn-iac-dev
+    branch: 'refs/heads/develop'

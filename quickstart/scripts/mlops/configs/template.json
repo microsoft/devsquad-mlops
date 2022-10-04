@@ -43,6 +43,18 @@
             {
                 "Name": "<project.alias>-Model-CT",
                 "SourceYamlPath": ".azure-pipelines/mlops/model-ct.yaml"
+            },
+            {
+                "Name": "<project.alias>-iac-ci",
+                "SourceYamlPath": ".azure-pipelines/iac/iac-ci.yml",
+                "BuildPolicy": {
+                    "Name": "<project.alias>-iac-ci build policy",
+                    "PathFilter": "/infrastructure-as-code/**"
+                }
+            },
+            {
+                "Name": "<project.alias>-iac-cd",
+                "SourceYamlPath": ".azure-pipelines/iac/iac-cd.yml"
             }
         ]
     }
