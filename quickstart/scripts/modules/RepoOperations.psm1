@@ -48,6 +48,11 @@ function UpdateIaCParameters {
 		-InputFile infrastructure-as-code/infrastructure/parameters/parameters.dev.template.json `
 		-OutputFile infrastructure-as-code/infrastructure/parameters/parameters.dev.json `
 		-ServicePrincipalSecret $ServicePrincipalSecret `
+
+	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
+		-InputFile infrastructure-as-code/infrastructure/parameters/parameters.prod.template.json `
+		-OutputFile infrastructure-as-code/infrastructure/parameters/parameters.prod.json `
+		-ServicePrincipalSecret $ServicePrincipalSecret `
 	
 	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
 		-InputFile .azure-pipelines/variable.environment.template.yml `

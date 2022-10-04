@@ -26,7 +26,7 @@ foreach ($variable in $variables.GetEnumerator()) {
 }
 
 Write-Host "Filtering environments that should be excluded..." -ForegroundColor Green
-$filtered = "dev" | Where-Object { $_ -ne $Environment }
+$filtered = "dev", "prod" | Where-Object { $_ -ne $Environment }
 
 Write-Host "Running acceptance tests..." -ForegroundColor Green
 Invoke-Pester -CI -Output Detailed ../infrastructure-as-code/scripts/tests/ -ExcludeTagFilter $filtered

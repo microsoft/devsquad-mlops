@@ -11,6 +11,7 @@ function CreateAzDevOpsVariableGroups {
     [Argument]::AssertIsNotNull("RepoConfiguration", $RepoConfiguration)
     
     CreateAzureDevOpsVariableGroup -VariableGroupName "mlops-iac-cd-output-dev" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
+    CreateAzureDevOpsVariableGroup -VariableGroupName "mlops-iac-cd-output-prod" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
 }
 
 function GetAzureDevOpsVariableGroup {

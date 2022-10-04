@@ -13,11 +13,11 @@
         "MinimumApprovers": "1",
         "Pipelines": [
             {
-                "Name": "<project.alias>-Workspace-CD",
+                "Name": "<project.alias>-workspace-cd",
                 "SourceYamlPath": ".azure-pipelines/mlops/workspace-cd.yaml"
             },
             {
-                "Name": "<project.alias>-Environment-CI",
+                "Name": "<project.alias>-environment-ci",
                 "SourceYamlPath": ".azure-pipelines/mlops/environment-ci.yaml", 
                 "BuildPolicy": {
                     "Name": "<project.alias>-environment-ci build policy",
@@ -25,11 +25,11 @@
                 }
             },
             {
-                "Name": "<project.alias>-Environment-CD",
+                "Name": "<project.alias>-environment-cd",
                 "SourceYamlPath": ".azure-pipelines/mlops/environment-cd.yaml"
             },
             {
-                "Name": "<project.alias>-Model-CI",
+                "Name": "<project.alias>-model-ci",
                 "SourceYamlPath": ".azure-pipelines/mlops/model-ci.yaml", 
                 "BuildPolicy": {
                     "Name": "<project.alias>-model-ci build policy",
@@ -37,11 +37,11 @@
                 }
             },
             {
-                "Name": "<project.alias>-Model-CD",
+                "Name": "<project.alias>-model-cd",
                 "SourceYamlPath": ".azure-pipelines/mlops/model-cd.yaml"
             },
             {
-                "Name": "<project.alias>-Model-CT",
+                "Name": "<project.alias>-model-ct",
                 "SourceYamlPath": ".azure-pipelines/mlops/model-ct.yaml"
             },
             {

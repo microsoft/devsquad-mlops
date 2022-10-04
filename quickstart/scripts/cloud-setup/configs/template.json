@@ -17,6 +17,11 @@
             "subscriptionId": "<subscriptionId>",
             "servicePrincipalName": "SP-<projectName>-DevTest",
             "serviceConnectionName": "spn-iac-dev"
+        },
+        "prod": {
+            "subscriptionId": "<subscriptionId>",
+            "servicePrincipalName": "SP-<projectName>-DevTest",
+            "serviceConnectionName": "spn-iac-prod"
         }
     },
     "output": [

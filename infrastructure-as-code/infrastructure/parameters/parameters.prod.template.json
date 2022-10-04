@@ -3,11 +3,11 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environment":{
-            "value": "dev"
+            "value": "prod"
         },
         "solutionName":{
             "value": "<Project.Alias>"
-        }, 
+        },    
         "location": {
             "value": "eastus"
         },
@@ -18,7 +18,7 @@
             "value": "<ServicePrincipal.Secret>"
         },
         "resourceGroupMachineLearning":{
-            "value": "rg-<Project.Alias>-ml-dev"
+            "value": "rg-<Project.Alias>-ml-prod"
         }
     }
 }

@@ -22,7 +22,7 @@ $config = LoadConfigurationFile -ConfigurationFile $ConfigurationFile -Verbose:$
 
 BeginScope -Scope "Enviornments"
 
-$environment = 'dev'
+$environment = 'dev','prod'
 
 foreach ($env in $environment)
 {
@@ -31,7 +31,7 @@ foreach ($env in $environment)
 
 EndScope
 
-$branches = 'develop'
+$branches = 'develop','main'
 
 try {
 

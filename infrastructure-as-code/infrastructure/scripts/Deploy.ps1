@@ -1,5 +1,5 @@
 param(
-    [Parameter(Mandatory)] [string] [ValidateSet("dev", "qa", "prod", "sandbox")] $Environment,
+    [Parameter(Mandatory)] [string] [ValidateSet("dev", "prod")] $Environment,
     [Parameter(Mandatory)] [string] $Version,
     [Parameter(Mandatory)] [string] $Location,
     [Parameter(Mandatory)] [string] $SolutionName,

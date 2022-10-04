@@ -1,7 +1,7 @@
 param(
-    [Parameter(Mandatory)] [string] [ValidateSet("dev", "qa", "prod", "sandbox")] $Environment,
+    [Parameter(Mandatory)] [string] [ValidateSet("dev", "prod")] $Environment,
     [string] $Location = "eastus",
-    [string] $SolutionName = "dataops",
+    [string] $SolutionName = "mlops",
     [string] [ValidateLength(1, 4)] $SandboxUniqueName
 )
 
