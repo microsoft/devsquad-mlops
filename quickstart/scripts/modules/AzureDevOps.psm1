@@ -10,14 +10,7 @@ function CreateAzDevOpsVariableGroups {
     
     [Argument]::AssertIsNotNull("RepoConfiguration", $RepoConfiguration)
     
-    CreateAzureDevOpsVariableGroup -VariableGroupName "dataops-iac-cd-output-dev" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
-    CreateAzureDevOpsVariableGroup -VariableGroupName "dataops-iac-cd-output-qa" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
-    CreateAzureDevOpsVariableGroup -VariableGroupName "dataops-iac-cd-output-prod" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
-    CreateAzureDevOpsVariableGroup -VariableGroupName "lib-versions" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
-    CreateAzureDevOpsVariable -VariableGroupName "lib-versions" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject -VariableName "MAJOR" -VariableValue "0"
-    CreateAzureDevOpsVariable -VariableGroupName "lib-versions" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject -VariableName "MINOR" -VariableValue "1"
-    CreateAzureDevOpsVariable -VariableGroupName "lib-versions" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject -VariableName "PATCH" -VariableValue "0"
-    CreateAzureDevOpsVariable -VariableGroupName "lib-versions" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject -VariableName "VERSION" -VariableValue "0"
+    CreateAzureDevOpsVariableGroup -VariableGroupName "mlops-iac-cd-output-dev" -AzureDevOpsOrganizationURI $RepoConfiguration.AzureDevOpsOrganizationURI -AzureDevOpsProject $RepoConfiguration.AzureDevOpsProject
 }
 
 function GetAzureDevOpsVariableGroup {
@@ -206,19 +199,6 @@ function CreateAzDevOpsRepoEnviorment {
          --http-method POST --in-file $infile `
          --api-version "6.0-preview"
     rm $infile -f
-    
-    # $envBody = @{
-    #     name = "qa"
-    #     description = "My qa environment"
-    # }
-    #     $infile = "envbody.json"
-    #     Set-Content -Path $infile -Value ($envBody | ConvertTo-Json)
-    #     az devops invoke `
-    #         --area distributedtask --resource environments `
-    #         --route-parameters project=microsoft-devsquad --org https://dev.azure.com/a-fabiopadua0196 `
-    #         --http-method POST --in-file $infile `
-    #         --api-version "6.0-preview"
-    #     rm $infile -f
 }
 
 function CreateAzDevOpsRepoCommentPolicy {

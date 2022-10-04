@@ -48,20 +48,6 @@ function UpdateIaCParameters {
 		-InputFile infrastructure-as-code/infrastructure/parameters/parameters.dev.template.json `
 		-OutputFile infrastructure-as-code/infrastructure/parameters/parameters.dev.json `
 		-ServicePrincipalSecret $ServicePrincipalSecret `
-
-	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
-		-InputFile infrastructure-as-code/infrastructure/parameters/parameters.qa.template.json `
-		-OutputFile infrastructure-as-code/infrastructure/parameters/parameters.qa.json `
-		-ServicePrincipalSecret $ServicePrincipalSecret `
-
-	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
-		-InputFile infrastructure-as-code/infrastructure/parameters/parameters.prod.template.json `
-		-OutputFile infrastructure-as-code/infrastructure/parameters/parameters.prod.json `
-		-ServicePrincipalSecret $ServicePrincipalSecret `
-	
-	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
-		-InputFile azure-pipelines/databricks/databricks-lib-cd.template.yml `
-		-OutputFile azure-pipelines/databricks/databricks-lib-cd.yml `
 	
 	ReplaceTemplateTokens -Configuration $Configuration -RemoveInput `
 		-InputFile azure-pipelines/variable.environment.template.yml `
