@@ -1,0 +1,68 @@
+parameters:
+- name: azureServiceConnectionName
+  type: string
+- name: source
+  type: string
+  default: .
+- name: configuration
+  type: string
+  default: 
+- name: useConda
+  type: boolean
+  default: false
+- name: condaEnvName
+  type: string
+  default: 
+- name: testFolder
+  type: string
+  default: tests
+- name: version
+  type: string
+  default: 6.2.5
+- name: args
+  type: string
+  default: ''
+- name: outputFile
+  type: string
+  default: '$(System.DefaultWorkingDirectory)/test-results/results.xml'
+
+steps:
+  - task: AzureCLI@2
+    displayName: Running PyTest
+    inputs:
+      scriptType: bash
+      scriptLocation: inlineScript
+      azureSubscription: ${{ parameters.azureServiceConnectionName }}
+      inlineScript: |
+        if ${{ lower(parameters.useConda) }}; then
+          echo "##[debug]Activating conda environment ${{ parameters.condaEnvName }}"
+          source $CONDA/etc/profile.d/conda.sh
+          conda activate ${{ parameters.condaEnvName }}
+
+          if ! [[ $(conda list --json | jq -r '.[] | select(.name=="pytest")') ]]; then
+            echo "##[debug]Environment doesn't contain PyTest. Installing..."
+            pip install pytest==${{ parameters.version }}
+            pip install pytest-cov
+          fi
+        fi
+
+        if [[ '${{ parameters.configuration }}' == '' ]]; then
+          echo "##[debug]Running tests"
+          (cd ${{ parameters.source }} && python -m pytest ${{ parameters.testFolder }} ${{ parameters.args }} --junit-xml=${{ parameters.outputFile }})
+        else
+          echo "##[debug]Running tests with configuration from ${{ parameters.configuration }}."
+          (cd ${{ parameters.source }}; python -m pytest ${{ parameters.testFolder }} ${{ parameters.args }} -c ${{ parameters.configuration }} --junit-xml=${{ parameters.outputFile }})
+        fi
+
+        if ${{ lower(parameters.useConda) }}; then
+          echo "##[debug]Deactivating conda environment ${{ parameters.condaEnvName }}"
+          conda deactivate
+        fi
+  - task: PublishTestResults@2
+    displayName: Publish test results
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: ${{ parameters.outputFile }}
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+      mergeTestResults: true
+      failTaskOnFailedTests: true

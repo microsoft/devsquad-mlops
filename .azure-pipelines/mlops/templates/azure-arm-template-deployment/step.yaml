@@ -1,0 +1,44 @@
+parameters:
+  - name: azureServiceConnectionName
+    type: string
+  - name: resourceGroup
+    type: string
+  - name: location
+    type: string
+  - name: deploymentName
+    type: string
+  - name: template
+    type: string
+  - name: version
+    type: string
+    default: 1.0
+  - name: parameters
+    type: string
+    default: 
+  
+steps:
+  - task: AzureCLI@2
+    displayName: Deploying IaC
+    inputs:
+      scriptType: bash
+      scriptLocation: inlineScript
+      azureSubscription: ${{ parameters.azureServiceConnectionName }}
+      inlineScript: |
+        az ts create --name ${{ parameters.deploymentName }} \
+                     --version "${{ parameters.version }}" \
+                     --resource-group ${{ parameters.resourceGroup }} \
+                     --location ${{ parameters.location }} \
+                     --template-file ${{ parameters.template }} \
+                     --yes
+        SPECIFICATION_ID=$(az ts list --resource-group ${{ parameters.resourceGroup }} | jq -r '.[0].id')
+        
+        if [[ "${{ parameters.parameters }}" == "" ]]; then
+          az deployment group create --resource-group ${{ parameters.resourceGroup }} \
+                                     --name deployment01 \
+                                     --template-spec $SPECIFICATION_ID/versions/${{ parameters.version }}
+        else
+          az deployment group create --resource-group ${{ parameters.resourceGroup }} \
+                                    --name deployment01 \
+                                    --template-spec $SPECIFICATION_ID/versions/${{ parameters.version }} \
+                                    --parameters ${{ parameters.parameters }}
+        fi

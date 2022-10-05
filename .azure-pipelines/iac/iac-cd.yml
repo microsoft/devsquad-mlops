@@ -2,6 +2,7 @@ trigger:
   branches:
     include:
     - develop
+    - main
   paths:
     include:
     - infrastructure-as-code/infrastructure

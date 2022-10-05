@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "value": "eastus2"
+            "value": "eastus"
         },
         "workspaceName": {
-            "value": "mlw-trunkbased-dev"
+            "value": "mlw-<Project.Alias>-dev"
         },
         "resourceGroupName": {
-            "value": "mlops-trunkbased-dev"
+            "value": "rg-<Project.Alias>-ml-dev"
         },
         "cpuTrainComputeSize": {
             "value": "STANDARD_D12"

@@ -20,18 +20,6 @@
         "description": "Region where the resource is provisioned"
       }
     }, 
-    "servicePrincipal": {
-      "type": "string",
-      "metadata": {
-        "description": "Service Principal for credentials usage"
-      }
-    },
-    "servicePrincipalSecret": {
-      "type": "string",
-      "metadata": {
-        "description": "Service Principal Secret for databricks usage"
-      }
-    },
     "resourceGroupMachineLearning": {
       "type": "string",
       "metadata": {
@@ -95,10 +83,6 @@
     }
   ],
   "variables": {
-    "envMapping": {
-      "eastus": "eastus",
-      "brazilsouth": "brzsouth"
-    },
     "uniqueStr": "[substring(uniqueString(subscription().subscriptionId), 0, 6)]",
     "mlDeploymentName": "[concat('ml-', deployment().name)]",
     "amlWorkspaceName": "[naming.default('mlw',variables('uniqueStr'), parameters('environment'), parameters('solutionName'))]",
@@ -110,7 +94,7 @@
   "resources": [
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2020-06-01",
+      "apiVersion": "2021-04-01",
       "name": "[variables('mlDeploymentName')]",
       "resourceGroup": "[parameters('resourceGroupMachineLearning')]",
       "properties": {

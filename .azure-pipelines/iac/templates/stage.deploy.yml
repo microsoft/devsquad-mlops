@@ -43,28 +43,6 @@ stages:
               azurePowerShellVersion: 'OtherVersion'
               preferredAzurePowerShellVersion: $(azPowershellVersion)
 
-          - task: AzurePowerShell@4
-            displayName: 'Update Key Vault Secrets'
-            inputs:
-              azureSubscription: ${{ parameters.azureServiceConnection }}
-              scriptType: filePath
-              scriptPath: infrastructure-as-code/scripts/UpdateKeyVaultSecrets.ps1
-              scriptArguments: >
-                -DeploymentOutputFile "armOutput.json"
-              azurePowerShellVersion: 'OtherVersion'
-              preferredAzurePowerShellVersion: $(azPowershellVersion)
-
-          - task: AzurePowerShell@4
-            displayName: 'Upload Sample Files'
-            inputs:
-              azureSubscription: ${{ parameters.azureServiceConnection }}
-              scriptType: filePath
-              scriptPath: infrastructure-as-code/scripts/UploadSampleData.ps1
-              scriptArguments: >
-                -DeploymentOutputFile "armOutput.json"
-              azurePowerShellVersion: 'OtherVersion'
-              preferredAzurePowerShellVersion: $(azPowershellVersion)
-
           - task: PowerShell@2
             displayName: 'Publish Outputs'
             inputs:
@@ -73,67 +51,8 @@ stages:
                 -AzureDevOpsPAT "$(System.AccessToken)"
                 -AzureDevOpsOrganization $(System.TeamFoundationCollectionUri)
                 -AzureDevOpsProject "$(System.TeamProject)"
-                -GroupName "dataops-iac-cd-output-${{ parameters.environment }}"
+                -GroupName "mlops-iac-cd-output-${{ parameters.environment }}"
                 -DeploymentOutputFile "armOutput.json"
-              pwsh: true
-              showWarnings: true
-            env:
-              AzureDevOpsPAT: $(System.AccessToken)
-          
-  - deployment: deploy_dbw_clusters
-    displayName: 'Deploy DBW Clusters to ${{ parameters.environment }}'
-    condition: succeeded()
-    dependsOn: deploy_arm
-    pool:
-      vmImage: 'Ubuntu-20.04'
-    environment: ${{ parameters.environment }}
-    variables:
-    - group: dataops-iac-cd-output-${{ parameters.environment }}
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - checkout: self
-          - template: step.install-databricks-cli.yml
-            parameters:
-              azureServiceConnection: ${{ parameters.azureServiceConnection }}
-          
-          - task: AzurePowerShell@4
-            displayName: 'Publish Databricks Secrets'
-            inputs:
-              azureSubscription: ${{ parameters.azureServiceConnection }}
-              scriptType: filePath
-              scriptPath: infrastructure-as-code/scripts/DatabricksSecrets.ps1
-              scriptArguments: >
-                -Environment ${{ parameters.environment }}
-                -DataLakeName $(dataLakeName)
-                -DatabricksName $(databricksName)
-                -KeyVaultName $(keyVaultName)
-                -DATABRICKS_TOKEN $(DATABRICKS_TOKEN)
-              azurePowerShellVersion: latestVersion
-
-          - task: PowerShell@2
-            displayName: Deploy DBW Clusters
-            inputs:
-              pwsh: true
-              targetType: 'filePath'
-              filePath: infrastructure-as-code/scripts/DatabricksClusters.ps1
-              arguments: >
-                -Environment ${{ parameters.environment }}
-                -DeploymentOutputFile "dbwOutput.json"
-            env:
-              DATABRICKS_HOST: https://$(databricksWorkspaceUrl)
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-          - task: PowerShell@2
-            displayName: 'Publish Outputs'
-            inputs:
-              filePath: infrastructure-as-code/scripts/PublishOutputs.ps1
-              arguments: >
-                -AzureDevOpsPAT "$(System.AccessToken)"
-                -AzureDevOpsOrganization $(System.TeamFoundationCollectionUri)
-                -AzureDevOpsProject "$(System.TeamProject)"
-                -GroupName "dataops-iac-dbw-cd-output-${{ parameters.environment }}"
-                -DeploymentOutputFile "dbwOutput.json"
               pwsh: true
               showWarnings: true
             env:
