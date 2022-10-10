@@ -6,6 +6,7 @@ trigger:
   paths:
     include:
     - infrastructure-as-code/infrastructure
+    - infrastructure-as-code/azureml
 
 variables:
 - template: ../variable.environment.yml
