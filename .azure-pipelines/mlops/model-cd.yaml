@@ -2,7 +2,7 @@ trigger: none
 
 resources:
   pipelines:
-  - pipeline: model-CT
+  - pipeline: model-ct
     source: model-CT
     trigger: 
       branches:
@@ -33,7 +33,7 @@ stages:
           azureServiceConnectionName: $(SERVICECONNECTION)
           name: ${{ variables.modelName }}-eval
           stepDisplayName: Computing McNemar statistic
-          jobFile: .aml/jobs/hatedetection/evaluate.job.yml
+          jobFile: ml-platform/aml/jobs/hatedetection/evaluate.job.yml
           useGitMessageForName: false
           workspaceName: $(WORKSPACENAME)
           resourceGroup: $(RESOURCEGROUPNAME)
@@ -112,7 +112,7 @@ stages:
             - template: templates/aml-endpoint-deploy/step.yaml
               parameters:
                 azureServiceConnectionName: $(SERVICECONNECTION)
-                endpointFile: .aml/endpoints/*/endpoint.yml
+                endpointFile: ml-platform/aml/endpoints/*/endpoint.yml
                 deploymentFile: deployments/*.yml
                 modelVersion: $(MODEL_VERSION_TO_DEPLOY)
                 workspaceName: $(WORKSPACENAME)

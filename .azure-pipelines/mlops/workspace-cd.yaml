@@ -4,7 +4,7 @@ trigger:
     - main
   paths:
     include:
-    - .aml/data/*
+    - ml-platform/aml/data/*
     - .cloud/*
 
 pool:
@@ -43,7 +43,7 @@ stages:
       - template: templates/aml-dataset-create/step.yaml
         parameters:
           azureServiceConnectionName: $(SERVICECONNECTION)
-          datasetFile: .aml/data/*/dataset.yml
+          datasetFile: ml-platform/aml/data/*/dataset.yml
           initialize: true
           initialDataPath: sample
           storageAccount: $(STORAGEACCOUNTNAME)

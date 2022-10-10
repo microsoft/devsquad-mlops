@@ -4,7 +4,7 @@ trigger:
     - main
   paths:
     include:
-    - .aml/jobs/**
+    - ml-platform/aml/jobs/**
     - src/**
 
 pool:
@@ -27,7 +27,7 @@ stages:
       - template: templates/aml-env-ensure/step.yaml
         parameters:
           azureServiceConnectionName: $(SERVICECONNECTION)
-          envFile: .aml/environments/${{ variables.condaEnvName }}/environment.yml
+          envFile: ml-platform/aml/environments/${{ variables.condaEnvName }}/environment.yml
           validateOnly: true
           workspaceName: $(WORKSPACENAME)
           resourceGroup: $(RESOURCEGROUPNAME)
@@ -35,7 +35,7 @@ stages:
         parameters:
           azureServiceConnectionName: $(SERVICECONNECTION)
           name: ${{ variables.modelName }}
-          jobFile: .aml/jobs/hatedetection/train.job.yml
+          jobFile: ml-platform/aml/jobs/hatedetection/train.job.yml
           workspaceName: $(WORKSPACENAME)
           resourceGroup: $(RESOURCEGROUPNAME)
           noWait: false
@@ -47,7 +47,7 @@ stages:
     displayName: Model registration
     environment: amlworkspace_$(env)
     variables:
-      jobName: $[ stageDependencies.aml_model_integrate.train.outputs['jobRun.jobName'] ]
+      jobName: $[ stageDependenciesml-platform/aml_model_integrate.train.outputs['jobRun.jobName'] ]
     strategy: 
       runOnce:
         deploy:
