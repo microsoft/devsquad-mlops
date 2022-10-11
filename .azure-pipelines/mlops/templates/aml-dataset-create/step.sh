@@ -41,13 +41,16 @@ do
         echo "##[debug]Dataset $DATASET_NAME is missing. Creating from file $DATASET_FILE."
         az ml data create --file $DATASET_FILE --resource-group $RESOURCE_GROUP --workspace-name $WORKSPACE_NAME
         
-        if $INITIALIZE; then
+        echo "##[debug]INITIALIZE '$INITIALIZE'"
+
+        if [ "$INITIALIZE" = true ] ; then
             # Data uploaded manually as AzureFileCopy@4 not supported in Linux
             echo "##[debug]Uploading data for $DATASET_NAME in container $CONTAINER_NAME ($STORAGE_ACCOUNT)"
             echo "##[debug]Source: $LOCAL_FOLDER/$INITIALIZE_WITH_DATA_PATH"
             echo "##[debug]Destination: $REMOTE_FOLDER"
 
             if test -d "$LOCAL_FOLDER/$INITIALIZE_WITH_DATA_PATH"; then
+                echo "az storage blob upload-batch -d $CONTAINER_NAME --auth-mode login --overwrite --account-name $STORAGE_ACCOUNT --source "$LOCAL_FOLDER/$INITIALIZE_WITH_DATA_PATH" --destination-path $REMOTE_FOLDER"
                 az storage blob upload-batch -d $CONTAINER_NAME --auth-mode login --overwrite --account-name $STORAGE_ACCOUNT --source "$LOCAL_FOLDER/$INITIALIZE_WITH_DATA_PATH" --destination-path $REMOTE_FOLDER
             else
                 echo "##vso[task.logissue type=error]Folder $LOCAL_FOLDER/$INITIALIZE_WITH_DATA_PATH not found."
